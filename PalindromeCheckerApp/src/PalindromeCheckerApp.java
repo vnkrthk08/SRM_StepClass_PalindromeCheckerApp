@@ -1,33 +1,64 @@
-import java.util.Deque;
-import java.util.LinkedList;
-
 public class PalindromeCheckerApp {
+
+    // Node class
+    static class Node {
+        char data;
+        Node next;
+
+        Node(char data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
 
     public static void main(String[] args) {
 
-        // Define input string
         String input = "madam";
 
-        // Create Deque
-        Deque<Character> deque = new LinkedList<>();
+        // Step 1: Convert string to linked list
+        Node head = null, tail = null;
 
-        // Step 1: Insert characters into deque
         for (char c : input.toCharArray()) {
-            deque.addLast(c);
+            Node newNode = new Node(c);
+            if (head == null) {
+                head = tail = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
+            }
         }
 
-        // Flag to track palindrome status
+        // Step 2: Find middle using slow & fast pointer
+        Node slow = head;
+        Node fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node prev = null;
+        Node current = slow;
+        while (current != null) {
+            Node nextNode = current.next;
+            current.next = prev;
+            prev = current;
+            current = nextNode;
+        }
+
+        // Step 3: Compare first half and reversed second half
+        Node firstHalf = head;
+        Node secondHalf = prev;
         boolean isPalindrome = true;
 
-        // Step 2 & 3: Remove first & last and compare
-        while (deque.size() > 1) {
-            char front = deque.removeFirst();
-            char rear = deque.removeLast();
-
-            if (front != rear) {
+        while (secondHalf != null) {
+            if (firstHalf.data != secondHalf.data) {
                 isPalindrome = false;
                 break;
             }
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
         }
 
         // Print result
