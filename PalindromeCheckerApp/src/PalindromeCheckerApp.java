@@ -2,23 +2,19 @@ public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        // Program starts
-        String str = "madam";   // Hardcoded string
-
-        // Hardcoded string is checked
+        String original = "madam";   // Hardcoded string
         String reversed = "";
 
-        for (int i = str.length() - 1; i >= 0; i--) {
-            reversed += str.charAt(i);
+        // Step 1: Reverse string using loop
+        for (int i = original.length() - 1; i >= 0; i--) {
+            reversed = reversed + original.charAt(i);
         }
 
-        // Result is printed
-        if (str.equals(reversed)) {
-            System.out.println("The string \"" + str + "\" is a Palindrome.");
+        // Step 2 & 3: Compare and Display result
+        if (original.equals(reversed)) {
+            System.out.println("The string \"" + original + "\" is a Palindrome.");
         } else {
-            System.out.println("The string \"" + str + "\" is NOT a Palindrome.");
+            System.out.println("The string \"" + original + "\" is NOT a Palindrome.");
         }
-
-
     }
 }
