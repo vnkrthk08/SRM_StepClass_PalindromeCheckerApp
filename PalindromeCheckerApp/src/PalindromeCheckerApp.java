@@ -1,85 +1,83 @@
-class PalindromeAlgorithms {
+// 1️⃣ Strategy Interface
+interface PalindromeStrategy {
+    boolean checkPalindrome(String input);
+}
 
-    // 1️⃣ Reverse using loop
-    public static boolean reverseMethod(String str) {
-        String reversed = "";
-        for (int i = str.length() - 1; i >= 0; i--) {
-            reversed += str.charAt(i);
-        }
-        return str.equals(reversed);
-    }
+// 2️⃣ Stack Strategy Implementation
+class StackStrategy implements PalindromeStrategy {
 
-    // 2️⃣ Two-pointer approach
-    public static boolean twoPointerMethod(String str) {
-        int start = 0;
-        int end = str.length() - 1;
+    public boolean checkPalindrome(String input) {
 
-        while (start < end) {
-            if (str.charAt(start) != str.charAt(end))
-                return false;
-            start++;
-            end--;
-        }
-        return true;
-    }
-
-    // 3️⃣ Stack method
-    public static boolean stackMethod(String str) {
         java.util.Stack<Character> stack = new java.util.Stack<>();
 
-        for (char ch : str.toCharArray()) {
+        for (char ch : input.toCharArray()) {
             stack.push(ch);
         }
 
-        for (char ch : str.toCharArray()) {
-            if (ch != stack.pop())
+        for (char ch : input.toCharArray()) {
+            if (ch != stack.pop()) {
                 return false;
+            }
         }
+
         return true;
-    }
-
-    // 4️⃣ Recursion method
-    public static boolean recursionMethod(String str, int start, int end) {
-        if (start >= end)
-            return true;
-
-        if (str.charAt(start) != str.charAt(end))
-            return false;
-
-        return recursionMethod(str, start + 1, end - 1);
     }
 }
 
+// 3️⃣ Deque Strategy Implementation
+class DequeStrategy implements PalindromeStrategy {
+
+    public boolean checkPalindrome(String input) {
+
+        java.util.Deque<Character> deque = new java.util.LinkedList<>();
+
+        for (char ch : input.toCharArray()) {
+            deque.addLast(ch);
+        }
+
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+// 4️⃣ Context Class (Strategy Injector)
+class PalindromeContext {
+
+    private PalindromeStrategy strategy;
+
+    public PalindromeContext(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeStrategy(String input) {
+        return strategy.checkPalindrome(input);
+    }
+}
+
+// 5️⃣ Main Class
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        String input = "madamimadam";  // bigger string gives better timing
+        String input = "madam";
 
-        long startTime, endTime;
+        // Choose Stack Strategy
+        PalindromeContext context = new PalindromeContext(new StackStrategy());
+        System.out.println("Using Stack Strategy: " +
+                context.executeStrategy(input));
 
-        // Reverse Method
-        startTime = System.nanoTime();
-        PalindromeAlgorithms.reverseMethod(input);
-        endTime = System.nanoTime();
-        System.out.println("Reverse Method Time: " + (endTime - startTime) + " ns");
-
-        // Two Pointer
-        startTime = System.nanoTime();
-        PalindromeAlgorithms.twoPointerMethod(input);
-        endTime = System.nanoTime();
-        System.out.println("Two Pointer Method Time: " + (endTime - startTime) + " ns");
-
-        // Stack Method
-        startTime = System.nanoTime();
-        PalindromeAlgorithms.stackMethod(input);
-        endTime = System.nanoTime();
-        System.out.println("Stack Method Time: " + (endTime - startTime) + " ns");
-
-        // Recursion Method
-        startTime = System.nanoTime();
-        PalindromeAlgorithms.recursionMethod(input, 0, input.length() - 1);
-        endTime = System.nanoTime();
-        System.out.println("Recursion Method Time: " + (endTime - startTime) + " ns");
+        // Switch to Deque Strategy at runtime
+        context.setStrategy(new DequeStrategy());
+        System.out.println("Using Deque Strategy: " +
+                context.executeStrategy(input));
     }
 }
